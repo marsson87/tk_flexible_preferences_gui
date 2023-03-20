@@ -7,7 +7,7 @@
         "False"
       ],
       "type": "dropdown",
-      "current": 1
+      "current": 0
     },
     "t1s2": {
       "field_description": "Second description. Description of particular preferences can be in many lines. Long characteristic can be placed in field_description.",

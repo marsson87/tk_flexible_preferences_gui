@@ -4,31 +4,13 @@ from tkinter import *
 from tkinter import ttk
 import tkinter as tk
 
-
-class ScrollableFrame(ttk.Frame):
-    def __init__(self, container, total_width, total_height, *args, **kwargs):
-        super().__init__(container, *args, **kwargs)
-        canvas = tk.Canvas(self, width=total_width, height=total_height, highlightthickness=0)
-        scrollbar = ttk.Scrollbar(self, orient="vertical", command=canvas.yview)
-        self.scrollable_frame = ttk.Frame(canvas)
-
-        self.scrollable_frame.bind(
-            "<Configure>",
-            lambda e: canvas.configure(
-                scrollregion=canvas.bbox("all")
-            )
-        )
-
-        canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
-        canvas.configure(yscrollcommand=scrollbar.set)
-
-        canvas.grid(row=0, column=0)
-        scrollbar.grid(row=0, column=1, sticky=N + S + W)
+from scrollableframe import ScrollableFrame
 
 
 class PreferencesGUI:
-    def __init__(self, master, config_filename, title=None, debug=False):
+    def __init__(self, master, config_filename, title=None, width=None, height=None, debug=False):
         self.master = master
+        self.config_filename = config_filename
         if not title:
             self.master.title("Flexible Preferences GUI")
         else:
@@ -37,18 +19,25 @@ class PreferencesGUI:
         self.debug = debug
 
         # Initialize style
-        s = ttk.Style()
+        # s = ttk.Style()
         # Create style used by default for all Frames
         # s.configure('TFrame', background='yellow')
 
         # Create style for the first frame
-        s.configure('Frame1.TFrame', background='red')
+        # s.configure('Frame1.TFrame', background='red')
         # Create separate style for the second frame
-        s.configure('Frame2.TFrame', background='green')
+        # s.configure('Frame2.TFrame', background='green')
 
         # Set default window size if not defined in class instance
-        self.total_width = 500
-        self.total_height = 300
+        if not width:
+            self.total_width = 500
+        else:
+            self.total_width = width
+
+        if not height:
+            self.total_height = 300
+        else:
+            self.total_height = height
 
         # Add frame for categories container
         self.frame_left = ttk.Frame(self.master, style='Frame1.TFrame')
@@ -72,7 +61,7 @@ class PreferencesGUI:
         self.options_fields_values = []
 
         # Load json settings
-        self.working_config = json.load(open(config_filename))
+        self.working_config = json.load(open(self.config_filename))
         if self.debug: print(self.working_config)
 
         self.reference_config = copy.deepcopy(self.working_config)
@@ -176,8 +165,7 @@ class PreferencesGUI:
     def update_working_config(self):
         for item in self.options_fields:
             current_id = item.option_id
-            print(current_id)
-            # print(type(item))
+            if self.debug: print(current_id)
             if isinstance(item, tk.ttk.Combobox):
                 # print(item['values'])
                 current_selection = item.current()
@@ -197,32 +185,12 @@ class PreferencesGUI:
 
     def clicked_ok_button(self):
         self.update_working_config()
-        with open('../conf_out.json', 'w') as f:
+        with open(self.config_filename, 'w') as f:
             json.dump(self.working_config, f, indent=2)
         self.close_window()
 
-        # ttk.Label(self.frame_right_sc.scrollable_frame,
-        #           text='').grid(row=self.options_current_row + 1, column=0)
-
-        # self.close_button = Button(self.frame_right_sc.scrollable_frame, text="Cat Option 1", relief='flat', command=self.master.quit)
-        # self.close_button.grid(column=1, row=0, padx=5, pady=5, sticky=N+W)
-        #
-        # self.close_button2 = Button(self.frame_right_sc.scrollable_frame, text="Cat Option 2", relief='flat', command=self.master.quit)
-        # self.close_button2.grid(column=1, row=1, padx=5, pady=5, sticky=N+W)
-        #
-        # self.n = tk.StringVar()
-        # self.combo = ttk.Combobox(self.frame_right_sc.scrollable_frame,
-        #                           width=15,
-        #                           textvariable=self.n,
-        #                           state='readonly')
-        # self.combo['values'] = ('act 1', 'act 2', 'act 3')
-        # self.combo.current(1)
-        # self.combo.grid(row=2, column=1, padx=5, pady=5, sticky=N+W)
-        #
-        # self.entry = ttk.Entry(self.frame_right_sc.scrollable_frame, width=20)
-        # self.entry.grid(row=3, column=1, padx=5, pady=5, sticky=N+W)
-
-    def clear_widget(self, target_frame):
+    @staticmethod
+    def clear_widget(target_frame):
         for widget in target_frame.winfo_children():
             widget.destroy()
 
@@ -230,9 +198,7 @@ class PreferencesGUI:
         # Take current values and update temporary config dictionary
         self.update_working_config()
 
-        print(index)
         btn_name = self.category_buttons[index].cget("text")
-        print(btn_name)
 
         self.clear_widget(self.frame_right_sc)
         self.options_current_row = 0
@@ -241,34 +207,3 @@ class PreferencesGUI:
 
         self.create_scrollable_frame()
         self.add_options(parent_label=btn_name)
-
-
-if __name__ == "__main__":
-    root = Tk()
-
-    root.resizable(False, False)  # This code helps to disable windows from resizing
-
-    # window_height = 500
-    # window_width = 900
-    #
-    # screen_width = root.winfo_screenwidth()
-    # screen_height = root.winfo_screenheight()
-    #
-    # x_cordinate = int((screen_width/4) - (window_width/2))
-    # y_cordinate = int((screen_height/2) - (window_height/2))
-    #
-    # root.geometry("{}x{}+{}+{}".format(window_width, window_height, x_cordinate, y_cordinate))
-
-    # root.columnconfigure(0, weight=1)
-    # root.columnconfigure(1, weight=3)
-    # root.columnconfigure(2, weight=2)
-
-    # Remove the Title bar of the window
-    # root.overrideredirect(True)
-
-    configuration_json_filename = 'conf.json'
-
-    my_gui = PreferencesGUI(root, config_filename=configuration_json_filename, debug=True)
-
-    root.unbind_all('<<NextWindow>>')  # Unbinding the behavior that causes Tab Cycling
-    root.mainloop()
