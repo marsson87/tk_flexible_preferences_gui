@@ -8,8 +8,6 @@ import tkinter as tk
 class ScrollableFrame(ttk.Frame):
     def __init__(self, container, total_width, total_height, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
-        # Here set size of canvas per requirements TODO set args in class instantiation
-        # canvas = tk.Canvas(self)
         canvas = tk.Canvas(self, width=total_width, height=total_height, highlightthickness=0)
         scrollbar = ttk.Scrollbar(self, orient="vertical", command=canvas.yview)
         self.scrollable_frame = ttk.Frame(canvas)
@@ -22,19 +20,21 @@ class ScrollableFrame(ttk.Frame):
         )
 
         canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
-
         canvas.configure(yscrollcommand=scrollbar.set)
 
-        # canvas.pack(side="left", fill="both", expand=True)
-        # scrollbar.pack(side="right", fill="y")
         canvas.grid(row=0, column=0)
         scrollbar.grid(row=0, column=1, sticky=N + S + W)
 
 
-class MyFirstGUI:
-    def __init__(self, master, filename):
+class PreferencesGUI:
+    def __init__(self, master, config_filename, title=None, debug=False):
         self.master = master
-        self.master.title("Flexible Preferences GUI")
+        if not title:
+            self.master.title("Flexible Preferences GUI")
+        else:
+            self.master.title(title)
+
+        self.debug = debug
 
         # Initialize style
         s = ttk.Style()
@@ -46,19 +46,24 @@ class MyFirstGUI:
         # Create separate style for the second frame
         s.configure('Frame2.TFrame', background='green')
 
+        # Set default window size if not defined in class instance
         self.total_width = 500
         self.total_height = 300
 
+        # Add frame for categories container
         self.frame_left = ttk.Frame(self.master, style='Frame1.TFrame')
         self.frame_left.grid(column=0, row=0, sticky=N)
 
+        # Add scrollable frame for settings container
         self.create_scrollable_frame()
 
+        # Add frame for buttons container
         self.frame_bottom = ttk.Frame(self.master)
         self.frame_bottom.grid(column=0, columnspan=2, row=1)
 
         self.create_buttons()
 
+        # Set predefined starting values and empty lists
         self.current_category_selection = None
         self.category_current_row = 0
         self.category_buttons = []
@@ -66,8 +71,10 @@ class MyFirstGUI:
         self.options_fields = []
         self.options_fields_values = []
 
-        self.working_config = json.load(open(filename))
-        print(self.working_config)
+        # Load json settings
+        self.working_config = json.load(open(config_filename))
+        if self.debug: print(self.working_config)
+
         self.reference_config = copy.deepcopy(self.working_config)
 
         self.initiate_settings_from_file()
@@ -89,7 +96,7 @@ class MyFirstGUI:
         for i, item in enumerate(self.working_config):
             if i == 0:
                 first_item = item
-            print(item)
+            if self.debug: print(item)
             self.add_category(label=item)
 
         self.current_category_selection = first_item
@@ -109,14 +116,8 @@ class MyFirstGUI:
 
         self.category_current_row += 1
 
-        # self.close_button = Button(self.frame_left, text="Tool 2", relief='flat', command=self.change_tool)
-        # self.close_button.grid(column=0, row=1)
-
-        # self.close_button = Button(self.frame_left, text="Close", relief='flat', command=self.master.quit)
-        # self.close_button.grid(column=0, row=5)
-
     def add_options(self, parent_label):
-        print(f"parent label: {parent_label}")
+        if self.debug: print(f"parent label: {parent_label}")
         self.current_category_selection = parent_label
         for item in self.working_config[parent_label]:
             conf_name = item
@@ -126,11 +127,11 @@ class MyFirstGUI:
 
             ttk.Label(self.frame_right_sc.scrollable_frame,
                       text=label,
-                      wraplength=self.total_width).grid(row=self.options_current_row,
-                                                               column=0,
-                                                               padx=5,
-                                                               pady=5,
-                                                               sticky=N + W)
+                      wraplength=self.total_width - 5).grid(row=self.options_current_row,
+                                                            column=0,
+                                                            padx=5,
+                                                            pady=5,
+                                                            sticky=N + W)
 
             self.options_current_row += 1
 
@@ -156,8 +157,6 @@ class MyFirstGUI:
                                      padx=5,
                                      pady=5,
                                      sticky=N + W)
-        # ttk.Label(self.frame_right_sc.scrollable_frame,
-        #           text='').grid(row=self.options_current_row + 1, column=0)
 
     def add_options_entry(self, current_text, name):
         self.options_fields_values.append(StringVar(self.master, value=current_text))
@@ -189,8 +188,9 @@ class MyFirstGUI:
             else:
                 print('not defined widget')
 
-        print(self.reference_config)
-        print(self.working_config)
+        if self.debug:
+            print(f"Reference config: {self.reference_config}")
+            print(f"Current config: {self.working_config}")
 
     def close_window(self):
         self.master.quit()
@@ -226,10 +226,6 @@ class MyFirstGUI:
         for widget in target_frame.winfo_children():
             widget.destroy()
 
-    def greet(self):
-        print("Greetings! Clearing right frame")
-        self.clear_widget(self.frame_right_sc)
-
     def change_tool(self, index):
         # Take current values and update temporary config dictionary
         self.update_working_config()
@@ -247,31 +243,32 @@ class MyFirstGUI:
         self.add_options(parent_label=btn_name)
 
 
-root = Tk()
+if __name__ == "__main__":
+    root = Tk()
 
-root.resizable(False, False)  # This code helps to disable windows from resizing
+    root.resizable(False, False)  # This code helps to disable windows from resizing
 
-# window_height = 500
-# window_width = 900
-#
-# screen_width = root.winfo_screenwidth()
-# screen_height = root.winfo_screenheight()
-#
-# x_cordinate = int((screen_width/4) - (window_width/2))
-# y_cordinate = int((screen_height/2) - (window_height/2))
-#
-# root.geometry("{}x{}+{}+{}".format(window_width, window_height, x_cordinate, y_cordinate))
+    # window_height = 500
+    # window_width = 900
+    #
+    # screen_width = root.winfo_screenwidth()
+    # screen_height = root.winfo_screenheight()
+    #
+    # x_cordinate = int((screen_width/4) - (window_width/2))
+    # y_cordinate = int((screen_height/2) - (window_height/2))
+    #
+    # root.geometry("{}x{}+{}+{}".format(window_width, window_height, x_cordinate, y_cordinate))
 
-# root.columnconfigure(0, weight=1)
-# root.columnconfigure(1, weight=3)
-# root.columnconfigure(2, weight=2)
+    # root.columnconfigure(0, weight=1)
+    # root.columnconfigure(1, weight=3)
+    # root.columnconfigure(2, weight=2)
 
-# Remove the Title bar of the window
-# root.overrideredirect(True)
+    # Remove the Title bar of the window
+    # root.overrideredirect(True)
 
-config_filename = 'conf.json'
+    configuration_json_filename = 'conf.json'
 
-my_gui = MyFirstGUI(root, config_filename)
+    my_gui = PreferencesGUI(root, config_filename=configuration_json_filename, debug=True)
 
-root.unbind_all('<<NextWindow>>')  # Unbinding the behavior that causes Tab Cycling
-root.mainloop()
+    root.unbind_all('<<NextWindow>>')  # Unbinding the behavior that causes Tab Cycling
+    root.mainloop()

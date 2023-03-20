@@ -1,0 +1,67 @@
+{
+  "First Group": {
+    "t1s1": {
+      "field_description": "First description. Short description in one line.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "type": "dropdown",
+      "current": 1
+    },
+    "t1s2": {
+      "field_description": "Second description. Description of particular preferences can be in many lines. Long characteristic can be placed in field_description.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "type": "dropdown",
+      "current": 1
+    },
+    "t1s3": {
+      "field_description": "Third description. Add some random features.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "type": "dropdown",
+      "current": 0
+    }
+  },
+  "Second Group": {
+    "t2s1": {
+      "field_description": "1st settings for tool 2",
+      "options": [
+        "opt 1",
+        "opt 2",
+        "opt 3",
+        "opt 4"
+      ],
+      "type": "dropdown",
+      "current": 2
+    },
+    "t2s2": {
+      "field_description": "2nd settings for tool 2",
+      "type": "entry",
+      "current": "random string"
+    },
+    "t2s3": {
+      "field_description": "3rd settings for tool 2",
+      "options": [
+        "True",
+        "False"
+      ],
+      "type": "dropdown",
+      "current": 0
+    },
+    "t2s4": {
+      "field_description": "4th settings for tool 2",
+      "options": [
+        "True",
+        "False"
+      ],
+      "type": "dropdown",
+      "current": 1
+    }
+  }
+}
