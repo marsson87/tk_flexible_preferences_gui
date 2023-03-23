@@ -1,3 +1,7 @@
+__author__ = 'marsson87'
+__author_name__ = 'Marek Torberntsson'
+__author_email__ = 'marsson87@gmail.com'
+
 import copy
 import json
 from tkinter import *
