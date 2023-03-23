@@ -1,5 +1,5 @@
 # flex-preferences-gui
-A modern and flexible GUI based on Tkinter, to visualize preferences defined in json file. User-friendly and simple to implement in projects.
+A flexible GUI based on Tkinter. An easy way to visualise preferences defined in a json file, including option controllers. User friendly and easy to implement in projects.
 
 Many developers struggle with difficulties how to handle a whole groups of settings.
 There is a handy way to visualize them and control by included widgets as:
