@@ -31,4 +31,4 @@ def create_gui(config_json_filename, title=None, width=None, height=None, debug=
 
 
 if __name__ == "__main__":
-    create_gui(config_json_filename='../conf.json')
+    create_gui(config_json_filename='conf.json')

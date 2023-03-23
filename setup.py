@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
 name = 'tk_flexible_preferences_gui',
-version = '0.1.0',
+version = '0.1.1',
 description = 'A flexible GUI based on Tkinter. An easy way to visualise preferences defined in a json file, including option controllers. User friendly and easy to implement in projects.',
 
 py_modules = ["flexgui", "preferencesgui", "scrollableframe"],
@@ -14,10 +14,15 @@ package_dir = {'': 'src'},
 #                 ...
 #  ],
 
+package_data={
+        "confing_template": ["conf.json"],
+    },
+
 author = 'marsson87',
 author_email = 'marsson87@gmail.com',
 
-long_description = open('README.md').read() + '\n\n' + open('CHANGELOG.md').read(),
+# long_description = open('README.md').read() + '\n\n' + open('CHANGELOG.md').read(),
+long_description = open('README.md').read(),
 long_description_content_type = "text/markdown",
 
 url = 'https://github.com/marsson87/tk_flexible_preferences_gui',
@@ -47,6 +52,6 @@ install_requires = [
 
 ],
 
-keywords = ['GUI', 'Preferences', 'Settings', 'Options', 'Tkinter', 'json'],
+keywords = ['GUI', 'Preferences', 'Settings', 'Options', 'Tkinter', 'JSON'],
 
 )
