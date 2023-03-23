@@ -8,13 +8,11 @@ from scrollableframe import ScrollableFrame
 
 
 class PreferencesGUI:
-    def __init__(self, master, config_filename, title=None, width=None, height=None, debug=False):
+    def __init__(self, master, config_filename, title, width, height, debug):
         self.master = master
         self.config_filename = config_filename
-        if not title:
-            self.master.title("Flexible Preferences GUI")
-        else:
-            self.master.title(title)
+
+        self.master.title(title)
 
         self.debug = debug
 
@@ -28,16 +26,8 @@ class PreferencesGUI:
         # Create separate style for the second frame
         # s.configure('Frame2.TFrame', background='green')
 
-        # Set default window size if not defined in class instance
-        if not width:
-            self.total_width = 500
-        else:
-            self.total_width = width
-
-        if not height:
-            self.total_height = 300
-        else:
-            self.total_height = height
+        self.total_width = width
+        self.total_height = height
 
         # Add frame for categories container
         self.frame_left = ttk.Frame(self.master, style='Frame1.TFrame')

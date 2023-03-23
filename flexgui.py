@@ -1,9 +1,18 @@
 from tkinter import *
 
-import preferencesgui
+from preferencesgui import PreferencesGUI
 
 
-def create_gui(config_json_filename='conf.json'):
+def create_gui(config_json_filename, title=None, width=None, height=None, debug=False):
+    # Manage passed arguments
+    if not title:
+        title = "Flexible Preferences GUI"
+    # Set default window size if not defined in class instance
+    if not width:
+        width = 500
+    if not height:
+        height = 300
+
     root = Tk()
 
     root.resizable(False, False)  # This code helps to disable windows from resizing
@@ -11,10 +20,11 @@ def create_gui(config_json_filename='conf.json'):
     # Remove the Title bar of the window
     # root.overrideredirect(True)
 
-    preferencesgui.PreferencesGUI(root, config_filename=config_json_filename, debug=False)
+    PreferencesGUI(root, config_json_filename, title, width, height, debug)
 
     root.unbind_all('<<NextWindow>>')  # Unbinding the behavior that causes Tab Cycling
     root.mainloop()
 
 
-create_gui(config_json_filename='conf.json')
+if __name__ == "__main__":
+    create_gui(config_json_filename='conf.json')
