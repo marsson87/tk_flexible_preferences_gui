@@ -7,6 +7,7 @@ import json
 from tkinter import *
 from tkinter import ttk
 import tkinter as tk
+import tkinter.font as tkFont
 
 from scrollableframe import ScrollableFrame
 
@@ -19,6 +20,11 @@ class PreferencesGUI:
         self.master.title(title)
 
         self.debug = debug
+
+        # Calculate relative font size depending on OS
+        ref_font = tkFont.Font(family="TkDefaultFont")
+        ref_text = '0'
+        self.f_px = ref_font.measure(ref_text)
 
         # Initialize style
         # s = ttk.Style()
@@ -145,7 +151,7 @@ class PreferencesGUI:
         self.options_fields_values.append(StringVar(self.master, value=current_text))
         self.options_fields.append(ttk.Entry(self.frame_right_sc.scrollable_frame,
                                              textvariable=self.options_fields_values[-1],
-                                             width=30))
+                                             width=int(self.total_width // self.f_px)))
         self.options_fields[-1].option_id = name
         self.options_fields[-1].grid(row=self.options_current_row,
                                      column=0,
