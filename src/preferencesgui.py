@@ -1,5 +1,4 @@
 __author__ = 'marsson87'
-__author_name__ = 'Marek Torberntsson'
 __author_email__ = 'marsson87@gmail.com'
 
 import copy
@@ -13,7 +12,7 @@ from scrollableframe import ScrollableFrame
 
 
 class PreferencesGUI:
-    def __init__(self, master, config_filename, title, width, height, debug):
+    def __init__(self, master, config_filename, title, width, height, bgcolor, fgcolor, button_bgcolor, button_fgcolor, debug):
         self.master = master
         self.config_filename = config_filename
 
@@ -26,21 +25,33 @@ class PreferencesGUI:
         ref_text = '0'
         self.f_px = ref_font.measure(ref_text)
 
-        # Initialize style
-        # s = ttk.Style()
-        # Create style used by default for all Frames
-        # s.configure('TFrame', background='yellow')
-
-        # Create style for the first frame
-        # s.configure('Frame1.TFrame', background='red')
-        # Create separate style for the second frame
-        # s.configure('Frame2.TFrame', background='green')
-
         self.total_width = width
         self.total_height = height
 
+        self.bgcolor = bgcolor
+        self.fgcolor = fgcolor
+        self.button_bgcolor =button_bgcolor
+        self.button_fgcolor =button_fgcolor
+
+        # Initialize style
+        s = ttk.Style()
+
+        # Create style for the frame and labels
+        s.configure('TFrame', background=self.bgcolor)
+        s.configure('TLabel', background=self.bgcolor, foreground=self.fgcolor)
+        # s.configure('TCombobox', background=self.bgcolor, fieldbackground=self.bgcolor, foreground=self.fgcolor)
+
+        # Create style for the buttons
+        s.configure('TButton', relief='flat', background=self.bgcolor, foreground=self.fgcolor)
+        s.map('TButton',
+              foreground=[('active', self.button_fgcolor)],
+              background=[('active', self.button_bgcolor)])
+
+        # Create style for the separator
+        s.configure('vert.TSeparator', background='gray')
+
         # Add frame for categories container
-        self.frame_left = ttk.Frame(self.master, style='Frame1.TFrame')
+        self.frame_left = ttk.Frame(self.master)
         self.frame_left.grid(column=0, row=0, sticky=N)
 
         # Add scrollable frame for settings container
@@ -48,7 +59,9 @@ class PreferencesGUI:
 
         # Add frame for buttons container
         self.frame_bottom = ttk.Frame(self.master)
-        self.frame_bottom.grid(column=0, columnspan=2, row=1)
+        self.frame_bottom.grid(column=0, columnspan=3, row=1)
+
+        self.create_separator()
 
         self.create_buttons()
 
@@ -69,16 +82,22 @@ class PreferencesGUI:
         self.initiate_settings_from_file()
 
     def create_scrollable_frame(self):
-        self.frame_right_sc = ScrollableFrame(self.master, style='Frame2.TFrame',
+        self.frame_right_sc = ScrollableFrame(self.master,
                                               total_width=self.total_width,
-                                              total_height=self.total_height)
-        self.frame_right_sc.grid(column=1, row=0, sticky=N)
+                                              total_height=self.total_height,
+                                              bgcolor=self.bgcolor)
+        self.frame_right_sc.grid(column=2, row=0, sticky=N)
+
+    def create_separator(self):
+        self.separator = ttk.Separator(self.master, orient=VERTICAL, style='vert.TSeparator',
+                                       takefocus=0) # cursor='plus'
+        self.separator.grid(column=1, row=0, ipady=int(self.total_height // 2), padx=5)
 
     def create_buttons(self):
-        self.ok_button = Button(self.frame_bottom, text='OK', command=self.clicked_ok_button)
+        self.ok_button = ttk.Button(self.frame_bottom, text='OK', command=self.clicked_ok_button)
         self.ok_button.grid(column=0, row=0, padx=5, pady=10)
 
-        self.cancel_button = Button(self.frame_bottom, text='Cancel', command=self.close_window)
+        self.cancel_button = ttk.Button(self.frame_bottom, text='Cancel', command=self.close_window)
         self.cancel_button.grid(column=1, row=0, padx=5, pady=10)
 
     def initiate_settings_from_file(self):
@@ -92,16 +111,17 @@ class PreferencesGUI:
         self.add_options(parent_label=first_item)
 
     def add_category(self, label):
-        self.category_buttons.append(Button(
+        self.category_buttons.append(ttk.Button(
             self.frame_left,
             text=label,
-            relief='flat',
             command=lambda c=len(self.category_buttons): self.change_tool(c)
         ))
         self.category_buttons[-1].grid(
             column=0,
             row=self.category_current_row,
-            sticky=W + E)
+            sticky=W + E,
+            padx=4,
+            pady=2)
 
         self.category_current_row += 1
 
