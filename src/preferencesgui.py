@@ -35,6 +35,7 @@ class PreferencesGUI:
 
         # Initialize style
         s = ttk.Style()
+        s.theme_use('clam')
 
         # Create style for the frame and labels
         s.configure('TFrame', background=self.bgcolor)
