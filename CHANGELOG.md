@@ -1,6 +1,9 @@
 # CHANGELOG
 
 ## Version 0.1.3 03/26/2023
+1. Theme updated for compliance between Linux and Windows OS
+
+## Version 0.1.3 03/26/2023
 1. Color attributes added for background and foreground of window and buttons
 
 ## Version 0.1.2 03/24/2023
